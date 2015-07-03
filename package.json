@@ -1,0 +1,26 @@
+{
+  "name": "generator-rna",
+  "version": "0.0.1",
+  "description": "A Yeoman generator for creating AngularJS, ReactJS and NodeJS Applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gonzalovazquez/generator-rna.git"
+  },
+  "keywords": [
+    "yeoman",
+    "generator",
+    "react-js",
+    "angular-js",
+    "node-js"
+  ],
+  "author": "Gonzalo Vazquez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gonzalovazquez/generator-rna/issues"
+  },
+  "homepage": "https://github.com/gonzalovazquez/generator-rna#readme"
+}
