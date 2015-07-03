@@ -4,14 +4,17 @@
   "description": "A Yeoman generator for creating AngularJS, ReactJS and NodeJS Applications",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
+  "files": [
+    "app"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gonzalovazquez/generator-rna.git"
   },
   "keywords": [
-    "yeoman",
+    "yeoman-generator",
     "generator",
     "react-js",
     "angular-js",
@@ -22,5 +25,14 @@
   "bugs": {
     "url": "https://github.com/gonzalovazquez/generator-rna/issues"
   },
-  "homepage": "https://github.com/gonzalovazquez/generator-rna#readme"
+  "homepage": "https://github.com/gonzalovazquez/generator-rna#readme",
+  "dependencies": {
+    "chalk": "^1.1.0",
+    "path": "^0.11.14",
+    "yeoman-generator": "^0.20.1",
+    "yosay": "^1.0.4"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
 }
