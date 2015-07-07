@@ -28,11 +28,10 @@
   "homepage": "https://github.com/gonzalovazquez/generator-rna#readme",
   "dependencies": {
     "chalk": "^1.1.0",
+    "lodash": "^3.10.0",
     "path": "^0.11.14",
     "yeoman-generator": "^0.20.1",
     "yosay": "^1.0.4"
   },
-  "devDependencies": {
-    "mocha": "*"
-  }
+  "devDependencies": {}
 }

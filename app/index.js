@@ -4,82 +4,102 @@ var chalk = require('chalk');
 var yosay = require('yosay');
 
 module.exports = yeoman.generators.Base.extend({
-  prompting: function () {
+
+  constructor: function () {
+    yeoman.generators.Base.apply(this, arguments);
+
+    this.option('skip-install', {
+      desc: 'Whether dependencies should be installed',
+      defaults: false
+    });
+  },
+
+  askFor: function () {
     var done = this.async();
 
-    // Have Yeoman greet the user.
-    this.log(yosay(
-      'Welcome to the' + chalk.red('rna') + ' generator!'
-    ));
+    this.log(yosay('Let\'s create an awesome project!'));
 
-    this.argument('appName', {
-      type: String,
-      required: false
-    });
-
-    var prompts = [
+    var prompt = [
       {
-        type: 'string',
-        name: 'App Name',
-        message: 'What would you like to call your app?'
+        type    : 'input',
+        name    : 'appName',
+        message : 'Your project name',
+        default : this.appname // Default to current folder name
       },
       {
-      type: 'list',
-      name: 'appType',
-      message: 'What app do you want to build today?',
-      choices: [
-          {
-              value: 'angular',
-              name: 'AngularJS'
-            },
-            {
-              value: 'node',
-              name: 'NodeJS'
-            },
-            {
-              value: 'react',
-              name: 'ReactJS'
-            }
+        type: 'list',
+        name: 'appType',
+        message: 'Select a type of app you will build today',
+        choices: [
+          'AngularJS',
+          'ReactJS',
+          'NodeJS'
         ]
-      }
+      },
+      {
+        type    : 'input',
+        name    : 'gitRepo',
+        message : 'Do you have a git repository?',
+      },
     ];
-    this.prompt(prompts, function (props) {
-      this.props = props;
-      // To access props later use this.props.someOption;
+
+    this.prompt(prompt, function (response) {
+      this.appName = response.appName;
+      this.appType = response.appType;
+      this.gitRepo = response.gitRepo;
+
       done();
     }.bind(this));
   },
+
   writing: {
     app: function () {
-      this.fs.copy(
-        this.templatePath('_package.json'),
-        this.destinationPath('package.json')
-      );
-      this.fs.copy(
-        this.templatePath('_bower.json'),
-        this.destinationPath('bower.json')
-      );
+
+      var context = {
+        app_type: this.appType,
+        app_name: this.appName,
+        git_repo: this.gitRepo
+      };
+
+      this.template('_package.json', this.appName + '/package.json', context);
+      this.template('_bower.json', this.appName + '/bower.json', context);
+      this.template('_src/index.html', this.appName + '/src/index.html', context);
+
+      this.directory(this.appName, './');
     },
     projectfiles: function () {
       this.fs.copy(
         this.templatePath('gitignore'),
-        this.destinationPath('.gitignore')
+        this.destinationPath(this.appName + '/.gitignore')
+      );
+
+      if (this.appType === 'AngularJS') {
+        this.fs.copy(
+          this.templatePath('_src/js/app.js'),
+          this.destinationPath(this.appName + '/src/js/app.js')
+        );
+      } else if (this.appType === 'ReactJS') {
+        this.fs.copy(
+          this.templatePath('_src/js/app_jsx.js'),
+          this.destinationPath(this.appName + '/src/js/app.js')
+        );
+      }
+  
+      this.fs.copy(
+        this.templatePath('_src/styles/main.css'),
+        this.destinationPath(this.appName + '/src/styles/main.css')
       );
     }
   },
+
   install: function () {
-    console.log(this.props);
-    switch(this.props.appType) {
-      case 'angular':
-        this.log(yosay('Installing AngularJS project'));
-        break;
-      case 'react':
-        this.log(yosay('Installing ReactJS project'));
-        break;
-      case 'node':
-        this.log(yosay('Installing ReactJS project'));
-        break;
-    }
-    this.installDependencies();
+    this.installDependencies({
+      bower: true,
+      npm: false,
+      skipInstall: this.options['skip-install'],
+      callback: function () {
+        console.log('Everything is ready!');
+      }
+    });
   }
 });
