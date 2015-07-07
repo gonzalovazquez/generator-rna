@@ -55,15 +55,15 @@ module.exports = yeoman.generators.Base.extend({
   writing: {
     app: function () {
 
-      var context = {
+      this.context = {
         app_type: this.appType,
         app_name: this.appName,
         git_repo: this.gitRepo
       };
 
-      this.template('_package.json', this.appName + '/package.json', context);
-      this.template('_bower.json', this.appName + '/bower.json', context);
-      this.template('_src/index.html', this.appName + '/src/index.html', context);
+      this.template('_package.json', this.appName + '/package.json', this.context);
+      this.template('_bower.json', this.appName + '/bower.json', this.context);
+      this.template('_src/index.html', this.appName + '/src/index.html', this.context);
 
       this.directory(this.appName, './');
     },
@@ -74,10 +74,7 @@ module.exports = yeoman.generators.Base.extend({
       );
 
       if (this.appType === 'AngularJS') {
-        this.fs.copy(
-          this.templatePath('_src/js/app.js'),
-          this.destinationPath(this.appName + '/src/js/app.js')
-        );
+        this.template('_src/js/app.js', this.appName + '/src/js/app.js', this.context);
       } else if (this.appType === 'ReactJS') {
         this.fs.copy(
           this.templatePath('_src/js/app_jsx.js'),
