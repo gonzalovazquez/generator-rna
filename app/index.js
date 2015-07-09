@@ -12,6 +12,11 @@ module.exports = yeoman.generators.Base.extend({
       desc: 'Whether dependencies should be installed',
       defaults: false
     });
+
+    this.option('angular', {
+      desc: 'Create an angular application',
+      defaults: ''
+    });
   },
  
   askFor: function () {

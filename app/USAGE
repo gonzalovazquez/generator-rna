@@ -1,0 +1,21 @@
+Description:
+    Create an Angular or React barebone web application
+
+Options:
+    skip-install: Does not install dependencies     Default:false
+    app-name: Specify app name that creates directory   Default:''
+    angular: Quickly build an angular app   Default: false
+    react: Quickly build a react app    Default: false
+
+Example:
+    yo rna
+
+    This will create:
+        .gitignore
+        package.json
+        bower.json
+        src/: Your application files
+        src/js/app.js
+        styles/: Your application style
+        styles/main.css
+
