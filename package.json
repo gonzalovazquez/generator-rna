@@ -4,7 +4,7 @@
   "description": "A Yeoman generator for creating AngularJS, ReactJS and NodeJS Applications",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "node_modules/mocha/bin/mocha"
   },
   "files": [
     "app"
@@ -30,12 +30,10 @@
     "chalk": "^1.1.0",
     "lodash": "^3.10.0",
     "path": "^0.11.14",
-    "uuid": "^2.0.1",
     "yeoman-generator": "^0.20.1",
     "yosay": "^1.0.4"
   },
   "devDependencies": {
-    "jasmine-beforeall": "^0.1.1",
-    "rimraf": "^2.4.1"
+    "mocha": "^2.2.5"
   }
 }
