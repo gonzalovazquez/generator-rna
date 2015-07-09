@@ -76,11 +76,6 @@ module.exports = yeoman.generators.Base.extend({
 
       done();
     }
-
-
-    console.log(this.options['appName'] + ' APPNAME');
-    console.log(this.options['angular'] + ' AngularJS');
-    console.log(this.options['react'] + ' ReactJS');
   },
  
   writing: {
