@@ -10,7 +10,7 @@ Options:
 Example:
     yo rna
 
-    This will create:
+    This will generate:
         .gitignore
         package.json
         bower.json
@@ -19,3 +19,6 @@ Example:
         styles/: Your application style
         styles/main.css
 
+    yo rna --appName=helloWorld --angular
+
+    This will generate an angular app name helloWorld

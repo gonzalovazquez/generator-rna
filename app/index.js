@@ -17,7 +17,7 @@ module.exports = yeoman.generators.Base.extend({
     this.option('appName', {
       desc: 'Type your application name',
       type: String,
-      defaults: 'app'
+      require: true
     });
 
     this.option('angular', {
@@ -78,9 +78,9 @@ module.exports = yeoman.generators.Base.extend({
     }
 
 
-    console.log(this.options['appName']);
-    console.log(this.options['angular']);
-    console.log(this.options['react']);
+    console.log(this.options['appName'] + ' APPNAME');
+    console.log(this.options['angular'] + ' AngularJS');
+    console.log(this.options['react'] + ' ReactJS');
   },
  
   writing: {
