@@ -79,7 +79,7 @@ describe('generator-rna:app', function () {
       });
     });
 
-    describe('generator-rna with arguments', function(){
+    describe('generator-rna with angular arguments', function(){
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../app'))
@@ -98,11 +98,11 @@ describe('generator-rna:app', function () {
       });
 
       afterEach(function() {
-        rimraf.sync('testApp');
+        rimraf.sync('somethingNew');
       });
 
     });
-    describe('generator-rna with arguments', function(){
+    describe('generator-rna with react arguments', function(){
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../app'))
@@ -121,7 +121,7 @@ describe('generator-rna:app', function () {
       });
 
       afterEach(function() {
-        rimraf.sync('testApp');
+        rimraf.sync('somethingElse');
       });
 
     });
