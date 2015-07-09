@@ -10,12 +10,26 @@ module.exports = yeoman.generators.Base.extend({
  
     this.option('skip-install', {
       desc: 'Whether dependencies should be installed',
+      type: Boolean,
       defaults: false
+    });
+
+    this.option('appName', {
+      desc: 'Type your application name',
+      type: String,
+      defaults: 'app'
     });
 
     this.option('angular', {
       desc: 'Create an angular application',
-      defaults: ''
+      type: Boolean,
+      defaults: false
+    });
+
+    this.option('react', {
+      desc: 'Create a react application',
+      type: Boolean,
+      defaults: false
     });
   },
  
@@ -23,38 +37,50 @@ module.exports = yeoman.generators.Base.extend({
     var done = this.async();
  
     this.log(yosay('Let\'s create an awesome project!'));
- 
-    var prompt = [
-      {
-        type    : 'input',
-        name    : 'appName',
-        message : 'Your project name',
-        default : this.appname // Default to current folder name
-      },
-     {
-        type: 'list',
-        name: 'appType',
-        message: 'Select a type of app you will build today',
-        choices: [
-          'AngularJS',
-          'ReactJS',
-          'NodeJS'
-        ]
-      },
-      {
-        type    : 'input',
-        name    : 'gitRepo',
-        message : 'Do you have a git repository?',
-      },
-    ];
- 
-    this.prompt(prompt, function (response) {
-      this.appName = response.appName;
-      this.appType = response.appType;
-      this.gitRepo = response.gitRepo;
- 
+
+    if (!this.options['angular'] && !this.options['react']) {
+      var prompt = [
+        {
+          type    : 'input',
+          name    : 'appName',
+          message : 'Your project name',
+          default : this.appname // Default to current folder name
+        },
+       {
+          type: 'list',
+          name: 'appType',
+          message: 'Select a type of app you will build today',
+          choices: [
+            'AngularJS',
+            'ReactJS',
+            'NodeJS'
+          ]
+        },
+        {
+          type    : 'input',
+          name    : 'gitRepo',
+          message : 'Do you have a git repository?',
+        },
+      ];
+
+      this.prompt(prompt, function (response) {
+        this.appName = response.appName;
+        this.appType = response.appType;
+        this.gitRepo = response.gitRepo;
+   
+        done();
+      }.bind(this));
+    } else {
+      this.appName = this.options['appName'];
+      this.appType = this.options['angular'] ? 'AngularJS' : 'ReactJS';
+
       done();
-    }.bind(this));
+    }
+
+
+    console.log(this.options['appName']);
+    console.log(this.options['angular']);
+    console.log(this.options['react']);
   },
  
   writing: {

@@ -12,7 +12,7 @@ describe('generator-rna:app', function () {
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../app'))
-          .inDir(path.join(__dirname, '.testApp'))
+          .inDir(path.join(__dirname, 'testApp'))
           .withOptions({ skipInstall: true })
           .withPrompts({ appName: 'testApp' })
           .withPrompts({ appType: 'AngularJS' })
@@ -51,9 +51,10 @@ describe('generator-rna:app', function () {
       });
   });
 
-    before(function (done) {
+    describe('generator-rna:react', function() {
+      before(function (done) {
         helpers.run(path.join(__dirname, '../app'))
-          .inDir(path.join(__dirname, '.testApp'))
+          .inDir(path.join(__dirname, 'testApp'))
           .withOptions({ skipInstall: true })
           .withPrompts({ appName: 'testApp' })
           .withPrompts({ appType: 'ReactJS' })
@@ -75,7 +76,53 @@ describe('generator-rna:app', function () {
 
       afterEach(function() {
         rimraf.sync('testApp');
-      }); 
+      });
+    });
 
+    describe('generator-rna with arguments', function(){
+
+      before(function (done) {
+        helpers.run(path.join(__dirname, '../app'))
+          .inDir(path.join(__dirname, 'somethingNew'))
+          .withOptions({appName: 'somethingNew' })
+          .withOptions({angular: 'true' })
+          .on('end', done);
+      });
+
+      it('should install react dependency', function() {
+        assert.fileContent('bower.json', new RegExp('"angular"'));
+      });
+
+      it('should include angular dependency', function() {
+        assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/angular/angular.js"></script>'));
+      });
+
+      afterEach(function() {
+        rimraf.sync('testApp');
+      });
+
+    });
+    describe('generator-rna with arguments', function(){
+
+      before(function (done) {
+        helpers.run(path.join(__dirname, '../app'))
+          .inDir(path.join(__dirname, 'somethingElse'))
+          .withOptions({appName: 'somethingElse' })
+          .withOptions({react: 'true' })
+          .on('end', done);
+      });
+
+      it('should install react dependency', function() {
+        assert.fileContent('bower.json', new RegExp('"react"'));
+      });
+
+      it('should include angular dependency', function() {
+        assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/react/react.js"></script>'));
+      });
+
+      afterEach(function() {
+        rimraf.sync('testApp');
+      });
+
+    });
 });
-
