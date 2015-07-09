@@ -1,6 +1,6 @@
 {
   "name": "generator-rna",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Yeoman generator for creating AngularJS, ReactJS and NodeJS Applications",
   "main": "index.js",
   "scripts": {
