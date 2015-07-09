@@ -75,7 +75,7 @@ describe('generator-rna:app', function () {
 
       afterEach(function() {
         rimraf.sync('testApp');
-      });
+      }); 
 
 });
 
