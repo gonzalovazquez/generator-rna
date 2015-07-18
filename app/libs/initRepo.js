@@ -9,7 +9,7 @@ var initRepo = function() {
 		var init = exec('git init');
 		if (init !== 0) {
 			reject('Failed to initialize repo');
-			 exit(1);
+			exit(1);
 		} else {
 			fulfill('Successfully initialized repo');
 		}
