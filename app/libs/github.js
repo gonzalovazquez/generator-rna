@@ -32,12 +32,12 @@ var createRepo = function(appMeta){
 		'name': appMeta.app_name,
 		'description': appMeta.description
 	}, function(err, result) {
-		if (err) {
-			reject(err);
-		} else {
-			fulfill(result);
-		}
-	});
+			if (err) {
+				reject(err);
+			} else {
+				fulfill(result);
+			}
+		});
 	});
 };
 

@@ -4,7 +4,7 @@
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
-var github = require('./github.js');
+var github = require('./libs/github.js');
 var error = chalk.bold.red;
  
 module.exports = yeoman.generators.Base.extend({
