@@ -36,6 +36,7 @@
     "yosay": "^1.0.4"
   },
   "devDependencies": {
+    "jshint": "^2.8.0",
     "mocha": "^2.2.5",
     "rimraf": "^2.4.1"
   }

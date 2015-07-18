@@ -3,6 +3,7 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var github = require('./github.js');
+var error = chalk.bold.red;
  
 module.exports = yeoman.generators.Base.extend({
  
@@ -100,9 +101,9 @@ module.exports = yeoman.generators.Base.extend({
 
 			github.createRepo(this.context).done(function (err, res){
 				try {
-						console.log('Repository created');
+						chalk.green('Repository created');
 				} catch (err) {
-						console.log('Error : ' + err);
+						this.log(error('Failed to create repository' + err));
 				}
 			});
 
@@ -143,7 +144,7 @@ module.exports = yeoman.generators.Base.extend({
 			npm: false,
 			skipInstall: this.options['skip-install'],
 			callback: function () {
-				console.log('Everything is ready!');
+				chalk.green('Everything is ready!');
 			}
 		});
 	}
