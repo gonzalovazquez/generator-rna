@@ -4,30 +4,30 @@ var Promise = require('promise');
 
 /* Initialize Github */
 var github = new GitHubApi({
-    // required 
-    version: "3.0.0",
-    // optional 
-    debug: false,
-    protocol: "https",
-    host: "api.github.com", // should be api.github.com for GitHub 
-    timeout: 5000,
-    headers: {
-        "user-agent": "generator-rna" // GitHub is happy with a unique user agent 
-    }
+		// required 
+		version: "3.0.0",
+		// optional 
+		debug: false,
+		protocol: "https",
+		host: "api.github.com", // should be api.github.com for GitHub 
+		timeout: 5000,
+		headers: {
+				"user-agent": "generator-rna" // GitHub is happy with a unique user agent 
+		}
 });
 
 /* Authenticate user */
 github.authenticate({
-    type: "token",
-    token: token,
+		type: "token",
+		token: token,
 });
 
 /* Creates repository and returns a promise */
 var createRepo = function(appMeta){
-  return new Promise(function (fulfill, reject){
-    github.repos.create({
-		'name': context.app_name,
-		'description': context.description
+	return new Promise(function (fulfill, reject){
+		github.repos.create({
+		'name': appMeta.app_name,
+		'description': appMeta.description
 	}, function(err, result) {
 		if (err) {
 			reject(err);
@@ -35,7 +35,7 @@ var createRepo = function(appMeta){
 			fulfill(result);
 		}
 	});
-  });
+	});
 };
 
-module.createRepo = createRepo;
+exports.createRepo = createRepo;
