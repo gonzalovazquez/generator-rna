@@ -6,7 +6,7 @@ var chalk = require('chalk');
 var yosay = require('yosay');
 var github = require('./libs/github.js');
 var gitAuto = require('./libs/initRepo.js');
-var error = chalk.bold.red;
+var self = this;
  
 module.exports = yeoman.generators.Base.extend({
  
@@ -63,11 +63,6 @@ module.exports = yeoman.generators.Base.extend({
 				},
 				{
 					type    : 'input',
-					name    : 'gitRepo',
-					message : 'Do you have a git repository?',
-				},
-				{
-					type    : 'input',
 					name    : 'description',
 					message : 'What are you building?',
 				}
@@ -76,7 +71,7 @@ module.exports = yeoman.generators.Base.extend({
 			this.prompt(prompt, function (response) {
 				this.appName = response.appName;
 				this.appType = response.appType;
-				this.gitRepo = response.gitRepo;
+				this.gitRepo = 'git@github.com:gonzalovazquez/'+ response.appName + '.git';
 				this.description = response.description;
 	 
 				done();
@@ -95,31 +90,32 @@ module.exports = yeoman.generators.Base.extend({
  
 			this.destinationRoot(this.appName);
  
-			this.context = {
+			self.context = {
 				app_type: this.appType,
 				app_name: this.appName,
 				git_repo: this.gitRepo,
 				description: this.description
 			};
 
-			github.createRepo(this.context).done(function (err, res){
+			github.createRepo(self.context).done(function (err, res){
 				try {
 						chalk.green('Repository created' + res);
 						gitAuto.initRepo().done(function(err, res) {
 							try {
-								chalk.green('Successfully initialized repo' + res);
+								console.log('Successfully initialized repo' + res);
 							} catch  (err) {
-								this.log(error('Failed to initialize repo' + err));
+								console.log('Failed to initialize repo' + err);
 							}
 						});
 				} catch (err) {
-						this.log(error('Failed to create repository' + err));
+						console.log('Failed to create repository' + err);
 				}
 			});
 
-			this.template('_package.json', this.destinationPath('package.json'), this.context);
-			this.template('_bower.json', this.destinationPath('bower.json'), this.context);
-			this.template('_src/index.html', this.destinationPath('src/index.html'), this.context);
+			this.template('README.md', this.destinationPath('README.md'), self.context);
+			this.template('_package.json', this.destinationPath('package.json'), self.context);
+			this.template('_bower.json', this.destinationPath('bower.json'), self.context);
+			this.template('_src/index.html', this.destinationPath('src/index.html'), self.context);
  
 			this.directory(this.appName, './');
 		},
@@ -131,7 +127,7 @@ module.exports = yeoman.generators.Base.extend({
 			);
  
 			if (this.appType === 'AngularJS') {
-				this.template('_src/js/app.js', this.destinationPath('src/js/app.js'), this.context);
+				this.template('_src/js/app.js', this.destinationPath('src/js/app.js'), self.context);
 			} else if (this.appType === 'ReactJS') {
 				this.fs.copy(
 					this.templatePath('_src/js/app_jsx.js'),
@@ -154,7 +150,30 @@ module.exports = yeoman.generators.Base.extend({
 			npm: false,
 			skipInstall: this.options['skip-install'],
 			callback: function () {
-				chalk.green('Everything is ready!');
+				console.log('Dependencies have been installed!');
+
+				gitAuto.addToRepo().done(function(err, res) {
+					try {
+						chalk.green('Successfully added to repo' + res);
+						gitAuto.firstCommit().done(function(err, res) {
+							try {
+								chalk.green('Successfully committed' + res);
+								gitAuto.pushRepo(self.context.git_repo).done(function(err, res) {
+									try {
+										console.log('Successfully pushed to repo' + res);
+									} catch  (err) {
+										console.log('Failed to push to repo' + err);
+									}
+								});
+							} catch  (err) {
+								console.log('Failed to commit ' + err);
+							}
+						});
+					} catch  (err) {
+						console.log('Failed to add to repo' + err);
+					}
+				});
+
 			}
 		});
 	}
