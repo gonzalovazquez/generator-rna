@@ -1,3 +1,6 @@
+/*jshint strict:false */
+'use strict';
+
 var GitHubApi = require('github');
 var token = process.env.TOKEN || '';
 var Promise = require('promise');

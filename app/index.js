@@ -1,4 +1,6 @@
+/*jshint strict:false */
 'use strict';
+
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
@@ -74,7 +76,7 @@ module.exports = yeoman.generators.Base.extend({
 				this.appName = response.appName;
 				this.appType = response.appType;
 				this.gitRepo = response.gitRepo;
-				this.description = response.description
+				this.description = response.description;
 	 
 				done();
 			}.bind(this));
@@ -101,7 +103,7 @@ module.exports = yeoman.generators.Base.extend({
 
 			github.createRepo(this.context).done(function (err, res){
 				try {
-						chalk.green('Repository created');
+						chalk.green('Repository created' + res);
 				} catch (err) {
 						this.log(error('Failed to create repository' + err));
 				}
