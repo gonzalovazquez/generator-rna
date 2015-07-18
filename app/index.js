@@ -2,7 +2,6 @@
 'use strict';
 
 var yeoman = require('yeoman-generator');
-var chalk = require('chalk');
 var yosay = require('yosay');
 var github = require('./libs/github.js');
 var gitAuto = require('./libs/initRepo.js');
@@ -99,7 +98,7 @@ module.exports = yeoman.generators.Base.extend({
 
 			github.createRepo(self.context).done(function (err, res){
 				try {
-						chalk.green('Repository created' + res);
+						console.log('Repository created' + res);
 						gitAuto.initRepo().done(function(err, res) {
 							try {
 								console.log('Successfully initialized repo' + res);
@@ -112,7 +111,7 @@ module.exports = yeoman.generators.Base.extend({
 				}
 			});
 
-			this.template('README.md', this.destinationPath('README.md'), self.context);
+			this.template('_README.md', this.destinationPath('README.md'), self.context);
 			this.template('_package.json', this.destinationPath('package.json'), self.context);
 			this.template('_bower.json', this.destinationPath('bower.json'), self.context);
 			this.template('_src/index.html', this.destinationPath('src/index.html'), self.context);
@@ -154,10 +153,10 @@ module.exports = yeoman.generators.Base.extend({
 
 				gitAuto.addToRepo().done(function(err, res) {
 					try {
-						chalk.green('Successfully added to repo' + res);
+						console.log('Successfully added to repo' + res);
 						gitAuto.firstCommit().done(function(err, res) {
 							try {
-								chalk.green('Successfully committed' + res);
+								console.log('Successfully committed' + res);
 								gitAuto.pushRepo(self.context.git_repo).done(function(err, res) {
 									try {
 										console.log('Successfully pushed to repo' + res);
