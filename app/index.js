@@ -2,6 +2,7 @@
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
+var github = require('./github.js');
  
 module.exports = yeoman.generators.Base.extend({
  
@@ -61,12 +62,18 @@ module.exports = yeoman.generators.Base.extend({
           name    : 'gitRepo',
           message : 'Do you have a git repository?',
         },
+        {
+          type    : 'input',
+          name    : 'description',
+          message : 'What are you building?',
+        }
       ];
 
       this.prompt(prompt, function (response) {
         this.appName = response.appName;
         this.appType = response.appType;
         this.gitRepo = response.gitRepo;
+        this.description = response.description
    
         done();
       }.bind(this));
@@ -77,7 +84,7 @@ module.exports = yeoman.generators.Base.extend({
       done();
     }
   },
- 
+
   writing: {
  
     app: function () {
@@ -88,14 +95,25 @@ module.exports = yeoman.generators.Base.extend({
         app_type: this.appType,
         app_name: this.appName,
         git_repo: this.gitRepo
+        description: this.description
       };
- 
+
+      github.createRepo(this.context).done(function (err, res){
+        try {
+            console.log('Repository created');
+            console.log(res);
+        } catch (err) {
+            console.log('Error : ' + err);
+        }
+      });
+
       this.template('_package.json', this.destinationPath('package.json'), this.context);
       this.template('_bower.json', this.destinationPath('bower.json'), this.context);
       this.template('_src/index.html', this.destinationPath('src/index.html'), this.context);
  
       this.directory(this.appName, './');
     },
+
     projectfiles: function () {
       this.fs.copy(
         this.templatePath('gitignore'),
