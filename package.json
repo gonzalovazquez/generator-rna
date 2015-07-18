@@ -28,7 +28,6 @@
   "homepage": "https://github.com/gonzalovazquez/generator-rna#readme",
   "dependencies": {
     "async": "^1.3.0",
-    "chalk": "^1.1.0",
     "github": "^0.2.4",
     "lodash": "^3.10.0",
     "path": "^0.11.14",

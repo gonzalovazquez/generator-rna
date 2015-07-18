@@ -5,13 +5,14 @@ var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var github = require('./libs/github.js');
 var gitAuto = require('./libs/initRepo.js');
+var async = require('async');
 var self = this;
- 
+
 module.exports = yeoman.generators.Base.extend({
- 
+
 	constructor: function () {
 		yeoman.generators.Base.apply(this, arguments);
- 
+
 		this.option('skip-install', {
 			desc: 'Whether dependencies should be installed',
 			type: Boolean,
@@ -36,10 +37,10 @@ module.exports = yeoman.generators.Base.extend({
 			defaults: false
 		});
 	},
- 
+
 	askFor: function () {
 		var done = this.async();
- 
+
 		this.log(yosay('Let\'s create an awesome project!'));
 
 		if (!this.options['angular'] && !this.options['react']) {
@@ -72,7 +73,7 @@ module.exports = yeoman.generators.Base.extend({
 				this.appType = response.appType;
 				this.gitRepo = 'git@github.com:gonzalovazquez/'+ response.appName + '.git';
 				this.description = response.description;
-	 
+
 				done();
 			}.bind(this));
 		} else {
@@ -84,11 +85,11 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	writing: {
- 
+
 		app: function () {
- 
+
 			this.destinationRoot(this.appName);
- 
+
 			self.context = {
 				app_type: this.appType,
 				app_name: this.appName,
@@ -115,7 +116,7 @@ module.exports = yeoman.generators.Base.extend({
 			this.template('_package.json', this.destinationPath('package.json'), self.context);
 			this.template('_bower.json', this.destinationPath('bower.json'), self.context);
 			this.template('_src/index.html', this.destinationPath('src/index.html'), self.context);
- 
+
 			this.directory(this.appName, './');
 		},
 
@@ -124,7 +125,7 @@ module.exports = yeoman.generators.Base.extend({
 				this.templatePath('gitignore'),
 				this.destinationPath('.gitignore')
 			);
- 
+
 			if (this.appType === 'AngularJS') {
 				this.template('_src/js/app.js', this.destinationPath('src/js/app.js'), self.context);
 			} else if (this.appType === 'ReactJS') {
@@ -133,46 +134,47 @@ module.exports = yeoman.generators.Base.extend({
 					this.destinationPath('src/js/app.js')
 				);
 			}
- 
+
 			this.fs.copy(
 				this.templatePath('_src/styles/main.css'),
 				this.destinationPath('src/styles/main.css')
 			);
 		}
 	},
- 
+
 	install: function () {
 		this.config.save();
- 
+
 		this.installDependencies({
 			bower: true,
 			npm: false,
 			skipInstall: this.options['skip-install'],
 			callback: function () {
 				console.log('Dependencies have been installed!');
-
-				gitAuto.addToRepo().done(function(err, res) {
-					try {
-						console.log('Successfully added to repo' + res);
-						gitAuto.firstCommit().done(function(err, res) {
-							try {
-								console.log('Successfully committed' + res);
-								gitAuto.pushRepo(self.context.git_repo).done(function(err, res) {
-									try {
-										console.log('Successfully pushed to repo' + res);
-									} catch  (err) {
-										console.log('Failed to push to repo' + err);
-									}
-								});
-							} catch  (err) {
-								console.log('Failed to commit ' + err);
-							}
-						});
-					} catch  (err) {
-						console.log('Failed to add to repo' + err);
-					}
-				});
-
+        async.series(
+          [
+            function (callback) {
+              var intializeRepo = gitAuto.addToRepo();
+              callback(null, intializeRepo);
+              console.log('Successfully added to repo');
+            },
+            function (callback) {
+              var commitFiles = gitAuto.firstCommit();
+              callback(null, commitFiles);
+              console.log('Successfully committed');
+            },
+            function (callback) {
+              var pushToOrigin = gitAuto.pushRepo(self.context.git_repo);
+              callback(null, pushToOrigin);
+              console.log('Successfully pushed to repo');
+            }
+          ],
+          function (err, result) {
+            if (err) {
+              console.log('An error occurred' + err);
+            }
+            console.log(result);
+          });
 			}
 		});
 	}
