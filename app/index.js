@@ -5,6 +5,7 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var github = require('./libs/github.js');
+var gitAuto = require('./libs/initRepo.js');
 var error = chalk.bold.red;
  
 module.exports = yeoman.generators.Base.extend({
@@ -104,6 +105,13 @@ module.exports = yeoman.generators.Base.extend({
 			github.createRepo(this.context).done(function (err, res){
 				try {
 						chalk.green('Repository created' + res);
+						gitAuto.initRepo().done(function(err, res) {
+							try {
+								chalk.green('Successfully initialized repo' + res);
+							} catch  (err) {
+								this.log(error('Failed to initialize repo' + err));
+							}
+						});
 				} catch (err) {
 						this.log(error('Failed to create repository' + err));
 				}
