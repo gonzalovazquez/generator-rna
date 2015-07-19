@@ -11,7 +11,8 @@
         "waitsFor": false,
         "runs": false,
         "exec": false,
-        "exit": false
+        "exit": false,
+        "colors": false
     },
 
     "node" : true,

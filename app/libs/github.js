@@ -2,7 +2,6 @@
 'use strict';
 
 var GitHubApi = require('github');
-var token = process.env.TOKEN || '';
 var Promise = require('promise');
 
 /* Initialize Github */
@@ -20,10 +19,32 @@ var github = new GitHubApi({
 });
 
 /* Authenticate user */
-github.authenticate({
-		type: "token",
-		token: token,
-});
+// github.authenticate({
+// 		type: "token",
+// 		token: token,
+// });
+//
+// github.authenticate({
+//     type: "basic",
+//     username: "mikedeboertest",
+//     password: "test1324"
+// });
+
+var authenticateUser = function(credentials) {
+	return new Promise(function (fulfill, reject) {
+		github.authenticate({
+		    type: "basic",
+		    username: credentials.username,
+		    password: credentials.password
+		}, function(err, result) {
+				if (err) {
+					reject(err);
+				} else {
+					fulfill(result);
+				}
+		});
+	})
+};
 
 /* Creates repository and returns a promise */
 var createRepo = function(appMeta){
@@ -41,4 +62,5 @@ var createRepo = function(appMeta){
 	});
 };
 
+exports.authenticateUser = authenticateUser;
 exports.createRepo = createRepo;

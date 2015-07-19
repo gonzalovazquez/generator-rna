@@ -6,6 +6,7 @@ var yosay = require('yosay');
 var github = require('./libs/github.js');
 var gitAuto = require('./libs/initRepo.js');
 var async = require('async');
+var colors = require('colors');
 var self = this;
 
 module.exports = yeoman.generators.Base.extend({
@@ -43,8 +44,20 @@ module.exports = yeoman.generators.Base.extend({
 
 		this.log(yosay('Let\'s create an awesome project!'));
 
+    this.log('In order to authenticate with Gihub, you need to provide your credentials'.green);
+
 		if (!this.options['angular'] && !this.options['react']) {
 			var prompt = [
+        {
+					type    : 'input',
+					name    : 'username',
+					message : 'What\'s your Github username?',
+				},
+        {
+					type    : 'password',
+					name    : 'password',
+					message : 'What\'s your Github password?',
+				},
 				{
 					type    : 'input',
 					name    : 'appName',
@@ -69,9 +82,11 @@ module.exports = yeoman.generators.Base.extend({
 			];
 
 			this.prompt(prompt, function (response) {
+        this.username = response.username;
+        this.password = response.password;
 				this.appName = response.appName;
 				this.appType = response.appType;
-				this.gitRepo = 'git@github.com:gonzalovazquez/'+ response.appName + '.git';
+				this.gitRepo = 'git@github.com:' + response.username +'/'+ response.appName + '.git';
 				this.description = response.description;
 
 				done();
@@ -94,23 +109,35 @@ module.exports = yeoman.generators.Base.extend({
 				app_type: this.appType,
 				app_name: this.appName,
 				git_repo: this.gitRepo,
-				description: this.description
+				description: this.description,
+        username: this.username,
+        password: this.password
 			};
 
-			github.createRepo(self.context).done(function (err, res){
-				try {
-						console.log('Repository created' + res);
-						gitAuto.initRepo().done(function(err, res) {
-							try {
-								console.log('Successfully initialized repo' + res);
-							} catch  (err) {
-								console.log('Failed to initialize repo' + err);
-							}
-						});
-				} catch (err) {
-						console.log('Failed to create repository' + err);
-				}
-			});
+      async.series(
+        [
+          function (callback) {
+            var authenticate = github.authenticateUser(self.context);
+            console.log('Successfully authenticated with Github');
+            callback(null, authenticate);
+          },
+          function (callback) {
+            var createRepository = github.createRepo(self.context);
+            console.log('Repository created'.green);
+            callback(null, createRepository);
+          },
+          function (callback) {
+            var initializeRepo = gitAuto.initRepo();
+            console.log('Successfully initialized repo'.green);
+            callback(null, initializeRepo);
+          }
+        ],
+        function (err, result) {
+          if (err) {
+            console.log('An error occurred' + err);
+          }
+          console.log(result);
+        });
 
 			this.template('_README.md', this.destinationPath('README.md'), self.context);
 			this.template('_package.json', this.destinationPath('package.json'), self.context);
@@ -150,28 +177,28 @@ module.exports = yeoman.generators.Base.extend({
 			npm: false,
 			skipInstall: this.options['skip-install'],
 			callback: function () {
-				console.log('Dependencies have been installed!');
+				console.log('Dependencies have been installed!'.green);
         async.series(
           [
             function (callback) {
               var intializeRepo = gitAuto.addToRepo();
               callback(null, intializeRepo);
-              console.log('Successfully added to repo');
+              console.log('Successfully added to repo'.green);
             },
             function (callback) {
               var commitFiles = gitAuto.firstCommit();
               callback(null, commitFiles);
-              console.log('Successfully committed');
+              console.log('Successfully committed'.green);
             },
             function (callback) {
               var pushToOrigin = gitAuto.pushRepo(self.context.git_repo);
               callback(null, pushToOrigin);
-              console.log('Successfully pushed to repo');
+              console.log('Successfully pushed to repo'.green);
             }
           ],
           function (err, result) {
             if (err) {
-              console.log('An error occurred' + err);
+              console.log('An error occurred'.red + err);
             }
             console.log(result);
           });
