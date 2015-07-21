@@ -118,13 +118,14 @@ module.exports = yeoman.generators.Base.extend({
         [
           function (callback) {
             var authenticate = github.authenticateUser('basic', self.context);
-            console.log('Successfully authenticated with Github');
+            console.log(authenticate);
             callback(null, authenticate);
+            console.log('Successfully authenticated with Github'.green);
           },
           function (callback) {
             var createRepository = github.createRepo(self.context);
-            console.log('Repository created'.green);
             callback(null, createRepository);
+            console.log('Repository created'.green);
           },
           function (callback) {
             var initializeRepo = gitAuto.initRepo();

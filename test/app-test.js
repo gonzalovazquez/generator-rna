@@ -4,6 +4,7 @@ var path = require('path');
 var rimraf = require('rimraf');
 var assert = require('yeoman-generator').assert;
 var helpers = require('yeoman-generator').test;
+var mockery = require('mockery');
 
 describe('generator-rna:app', function () {
 
@@ -11,9 +12,37 @@ describe('generator-rna:app', function () {
   describe('generator-rna: angular', function() {
 
       before(function (done) {
+        mockery.registerMock('github', function () {
+          return {
+            user: {
+              authenticate: function (data, cb) {
+                cb(null, JSON.stringify({
+                  type: 'basic',
+                  username: 'gonzalovazquez',
+                  password: 'supersecretpassword'
+                }));
+              }
+            },
+            repos: {
+              create: function (data, cb) {
+                cb(null, JSON.stringify({
+                  name: 'testApp',
+              		description: 'my super app'
+                }));
+              }
+            }
+          };
+        });
+
         helpers.run(path.join(__dirname, '../app'))
           .inDir(path.join(__dirname, 'testApp'))
           .withOptions({ skipInstall: true })
+          .withPrompts(
+            { username: 'gonzalovazquez' },
+            { password: 'supersecretpassword' },
+            { appName: 'testApp' },
+            { appType: 'AngularJS' }
+          )
           .withPrompts({ appName: 'testApp' })
           .withPrompts({ appType: 'AngularJS' })
           .on('end', done);
