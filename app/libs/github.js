@@ -30,16 +30,17 @@ var github = new GitHubApi({
 //     password: "test1324"
 // });
 
-var authenticateUser = function(credentials) {
+var authenticateUser = function(type, credentials) {
 	return new Promise(function (fulfill, reject) {
 		github.authenticate({
-		    type: "basic",
+		    type: type,
 		    username: credentials.username,
 		    password: credentials.password
 		}, function(err, result) {
 				if (err) {
 					reject(err);
 				} else {
+					console.log('Successfully authenticated with Github');
 					fulfill(result);
 				}
 		});

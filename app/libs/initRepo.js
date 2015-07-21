@@ -5,6 +5,7 @@ var Promise = require('promise');
 require('shelljs/global');
 
 
+/* Initializing Repository */
 var initRepo = function() {
 	return new Promise(function(fulfill, reject) {
 		var init = exec('git init');
@@ -17,6 +18,7 @@ var initRepo = function() {
 	});
 };
 
+/* Adding to repository */
 var addToRepo = function() {
 	return new Promise(function(fulfill, reject) {
 		var add = exec('git add --all');
@@ -29,6 +31,7 @@ var addToRepo = function() {
 	});
 };
 
+/* Commiting working files */
 var firstCommit = function() {
 	return new Promise(function(fulfill, reject) {
 		var commit = exec('git commit -m "first commit"');
@@ -41,8 +44,8 @@ var firstCommit = function() {
 	});
 };
 
+/* Setting origin and pushing working files */
 var pushRepo = function(endpoint) {
-	console.log(endpoint);
 	return new Promise(function(fulfill, reject) {
 		var setRemote = exec('git remote add origin ' + endpoint);
 		var push = exec('git push -u origin master');
@@ -54,8 +57,6 @@ var pushRepo = function(endpoint) {
 		}
 	});
 };
-
-
 
 exports.initRepo = initRepo;
 exports.addToRepo = addToRepo;

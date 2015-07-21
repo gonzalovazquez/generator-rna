@@ -117,7 +117,7 @@ module.exports = yeoman.generators.Base.extend({
       async.series(
         [
           function (callback) {
-            var authenticate = github.authenticateUser(self.context);
+            var authenticate = github.authenticateUser('basic', self.context);
             console.log('Successfully authenticated with Github');
             callback(null, authenticate);
           },
