@@ -1,0 +1,19 @@
+{
+  "name": "weqwe",
+  "version": "0.0.1",
+  "author": "Gonzalo Vazquez",
+  "description": "weqw",
+  "private": true,
+  "contributors": [
+    {
+      "name": "Gonzalo Vazquez",
+      "email": "gonzalo.segura1@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gonzalovaz/weqwe.git"
+  },
+  "devDependencies": {
+  }
+}

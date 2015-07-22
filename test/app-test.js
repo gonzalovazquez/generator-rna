@@ -26,7 +26,7 @@ describe('generator-rna:app', function () {
             repos: {
               create: function (data, cb) {
                 cb(null, JSON.stringify({
-                  name: 'testApp',
+                  name: 'testAppFromTest',
               		description: 'my super app'
                 }));
               }
