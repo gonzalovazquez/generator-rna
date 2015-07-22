@@ -103,48 +103,44 @@ module.exports = yeoman.generators.Base.extend({
 
 		app: function () {
 
+			this.destinationRoot(this.appName);
+
 			self.context = {
 				app_type: this.appType,
 				app_name: this.appName,
 				git_repo: this.gitRepo,
 				description: this.description,
-				username: this.username,
-				password: this.password
+        username: this.username,
+        password: this.password
 			};
 
-			github.authenticateUser('basic', self.context).done(function(res) {
-					console.log('Response from authenticate user');
-					console.log(res);
-			});
+      async.series(
+        [
+          function (callback) {
+            var authenticate = github.authenticateUser('basic', self.context);
+            console.log(authenticate);
+            callback(null, authenticate);
+            console.log('Successfully authenticated with Github'.green);
+          },
+          function (callback) {
+            var createRepository = github.createRepo(self.context);
+            callback(null, createRepository);
+            console.log('Repository created'.green);
+          },
+          function (callback) {
+            var initializeRepo = gitAuto.initRepo();
+            console.log('Successfully initialized repo'.green);
+            callback(null, initializeRepo);
+          }
+        ],
+        function (err, result) {
+          if (err) {
+            console.log('An error occurred' + err);
+            return;
+          }
+          console.log(result);
+        });
 
-      // async.series(
-      //   [
-      //     function (callback) {
-      //       var authenticate = github.authenticateUser('basic', self.context);
-      //       console.log(authenticate);
-      //       callback(null, authenticate);
-      //       console.log('Successfully authenticated with Github'.green);
-      //     },
-      //     function (callback) {
-      //       var createRepository = github.createRepo(self.context);
-      //       callback(null, createRepository);
-      //       console.log('Repository created'.green);
-      //     },
-      //     function (callback) {
-      //       var initializeRepo = gitAuto.initRepo();
-      //       console.log('Successfully initialized repo'.green);
-      //       callback(null, initializeRepo);
-      //     }
-      //   ],
-      //   function (err, result) {
-      //     if (err) {
-      //       console.log('An error occurred' + err);
-      //       return;
-      //     }
-      //     console.log(result);
-      //   });
-
-			this.destinationRoot(this.appName);
 			this.template('_README.md', this.destinationPath('README.md'), self.context);
 			this.template('_package.json', this.destinationPath('package.json'), self.context);
 			this.template('_bower.json', this.destinationPath('bower.json'), self.context);
