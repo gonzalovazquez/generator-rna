@@ -112,7 +112,7 @@ module.exports = yeoman.generators.Base.extend({
 				password: this.password
 			};
 
-			github.authenticateUser('basic', self.context).then(function(res) {
+			github.authenticateUser('basic', self.context).done(function(res) {
 					console.log('Response from authenticate user');
 					console.log(res);
 			});

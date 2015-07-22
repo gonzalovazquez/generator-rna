@@ -1,8 +1,8 @@
 'use strict';
 /**
-* weqwe Module
+* ferewr Module
 *
 * Description
 * Auto-generated angular app
 */
-var app = angular.module('weqwe', []);
+var app = angular.module('ferewr', []);
