@@ -19,18 +19,7 @@ var github = new GitHubApi({
 		}
 });
 
-/* Authenticate user */
-// github.authenticate({
-// 		type: "token",
-// 		token: token,
-// });
-//
-// github.authenticate({
-//     type: "basic",
-//     username: "mikedeboertest",
-//     password: "test1324"
-// });
-
+/* Authentication of user */
 var authenticateUser = function(type, credentials) {
 	return new Promise(function (fulfill, reject) {
 		github.authenticate({

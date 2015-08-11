@@ -4,7 +4,7 @@
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var github = require('./libs/github.js');
-var gitAuto = require('./libs/initRepo.js');
+var gitAuto = require('./libs/repo-automation.js');
 var async = require('async');
 var colors = require('colors');
 var self = this;
@@ -54,6 +54,11 @@ module.exports = yeoman.generators.Base.extend({
 					message : 'What\'s your Github username?',
 				},
         {
+					type    : 'input',
+					name    : 'email',
+					message : 'What is your email on Github?',
+				},
+        {
 					type    : 'password',
 					name    : 'password',
 					message : 'What\'s your Github password?',
@@ -86,8 +91,9 @@ module.exports = yeoman.generators.Base.extend({
         this.password = response.password;
 				this.appName = response.appName;
 				this.appType = response.appType;
-				this.gitRepo = 'git@github.com:' + response.username +'/'+ response.appName + '.git';
+				this.gitRepo = 'https://github.com/' + response.username + '/' + response.appName + '.git';
 				this.description = response.description;
+				this.email = response.email;
 
 				done();
 			}.bind(this));
@@ -104,6 +110,8 @@ module.exports = yeoman.generators.Base.extend({
 		app: function () {
 
 			this.destinationRoot(this.appName);
+
+			console.log(this.destinationRoot(this.appName));
 
 			self.context = {
 				app_type: this.appType,
@@ -126,11 +134,6 @@ module.exports = yeoman.generators.Base.extend({
             var createRepository = github.createRepo(self.context);
             callback(null, createRepository);
             console.log('Repository created'.green);
-          },
-          function (callback) {
-            var initializeRepo = gitAuto.initRepo();
-            console.log('Successfully initialized repo'.green);
-            callback(null, initializeRepo);
           }
         ],
         function (err, result) {
@@ -180,23 +183,22 @@ module.exports = yeoman.generators.Base.extend({
 			skipInstall: this.options['skip-install'],
 			callback: function () {
 				console.log('Dependencies have been installed!'.green);
+
+				var schema = {
+					directory : self.appName,
+					url : self.gitRepo,
+					username : self.username,
+					email : self.email,
+					password : self.password
+				}
+
         async.series(
           [
             function (callback) {
-              var intializeRepo = gitAuto.addToRepo();
+              var intializeRepo = gitAuto.initializeReposity(schema);
               callback(null, intializeRepo);
               console.log('Successfully added to repo'.green);
             },
-            function (callback) {
-              var commitFiles = gitAuto.firstCommit();
-              callback(null, commitFiles);
-              console.log('Successfully committed'.green);
-            },
-            function (callback) {
-              var pushToOrigin = gitAuto.pushRepo(self.context.git_repo);
-              callback(null, pushToOrigin);
-              console.log('Successfully pushed to repo'.green);
-            }
           ],
           function (err, result) {
             if (err) {
