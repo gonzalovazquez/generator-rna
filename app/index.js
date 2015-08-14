@@ -109,9 +109,9 @@ module.exports = yeoman.generators.Base.extend({
 
 		app: function () {
 
-			this.destinationRoot(this.appName);
+			self.destination = this.destinationRoot(this.appName);
 
-			console.log(this.destinationRoot(this.appName));
+			console.log(self.destination);
 
 			self.context = {
 				app_type: this.appType,
@@ -119,7 +119,8 @@ module.exports = yeoman.generators.Base.extend({
 				git_repo: this.gitRepo,
 				description: this.description,
         username: this.username,
-        password: this.password
+        password: this.password,
+				email: this.email
 			};
 
       async.series(
@@ -183,29 +184,25 @@ module.exports = yeoman.generators.Base.extend({
 			skipInstall: this.options['skip-install'],
 			callback: function () {
 				console.log('Dependencies have been installed!'.green);
+				console.log('Trying to initialize your repository'.green);
 
-				var schema = {
-					directory : self.appName,
-					url : self.gitRepo,
-					username : self.username,
-					email : self.email,
-					password : self.password
+				gitAuto.setWorkingDirectory(self.destination);
+				gitAuto.setUrl(self.context.git_repo);
+				gitAuto.setCredentials(self.context.password);
+
+				try {
+					gitAuto.createAuthor(self.context.username, self.context.email).done(function (res) {
+						console.log(res);
+						console.log('Created your Github Author'.green);
+					});
+					gitAuto.initializeReposity().done(function(res) {
+						console.log(res);
+						console.log('Successfully initialized your reposity'.green);
+					});
+				} catch (error) {
+					console.log(error);
+					console.log('Unable to initialize your respository'.red);
 				}
-
-        async.series(
-          [
-            function (callback) {
-              var intializeRepo = gitAuto.initializeReposity(schema);
-              callback(null, intializeRepo);
-              console.log('Successfully added to repo'.green);
-            },
-          ],
-          function (err, result) {
-            if (err) {
-              console.log('An error occurred'.red + err);
-            }
-            console.log(result);
-          });
 			}
 		});
 	}

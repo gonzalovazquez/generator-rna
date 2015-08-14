@@ -5,38 +5,54 @@ var fse = promisify(require('fs-extra'));
 var Promise = require('promise');
 fse.ensureDir = promisify(fse.ensureDir);
 
-var repository, oid, remote, index, repoDir, author, commiter;
+var repository, oid, remote, index, repoDir, author, committer;
 var directory, url, username, email, password;
 
 
+/* Sets working directory */
+var setWorkingDirectory = function (name) {
+  if (!name) {
+    throw new Error('Please specify directory name' + name);
+  }
+  directory = name;
+  //repoDir = require('path').resolve(directory);
+  console.log('Directory set to ' + directory);
+};
 
+/* Create Author and Commiter */
+var createAuthor = function (setUsername, setEmail) {
+  return new Promise(function (fulfill, reject) {
+    username = setUsername;
+    email = setEmail;
+    author = Nodegit.Signature.now(username, email);
+    committer = Nodegit.Signature.now(username, email);
+    console.log(author + ' + ' + committer);
+    if (!author || !committer) {
+      reject(author);
+    } else {
+      fulfill('Author created ' + author);
+    }
+  });
+};
 
-var initializeReposity = function (schema) {
-  directory = schema.directory;
-  url = schema.url;
-  username = schema.username;
-  email = schema.email;
-  password = schema.password;
-  repoDir = require('path').resolve(directory);
-  author = Nodegit.Signature.now(username, email);
-  committer = Nodegit.Signature.now(username, email);
+var setUrl = function (setUrl) {
+  if (!setUrl) {
+    throw new Error('Please specify a url');
+  }
+  url = setUrl;
+  console.log('URL is set to ' + setUrl);
+};
+
+var setCredentials = function(setPassword) {
+  if (!setPassword) {
+    throw new Error('Please specify a password');
+  }
+  password = setPassword;
+  console.log('Password is set');
 };
 
 
-var initializeReposity = function (schema) {
-  console.log(schema + 'SCHEMA!!!!');
-  directory = schema.directory;
-  url = schema.url;
-  username = schema.username;
-  email = schema.email;
-  password = schema.password;
-
-  console.log(directory);
-
-  repoDir = require('path').resolve(directory);
-  author = Nodegit.Signature.now(username, email);
-  committer = Nodegit.Signature.now(username, email);
-
+var initializeReposity = function () {
   return new Promise(function (fulfill, reject) {
     Nodegit.Repository.init(path.resolve(__dirname, directory), 0)
     .then(function(repo) {
@@ -93,15 +109,19 @@ var initializeReposity = function (schema) {
                repository.defaultSignature(),
                "Push to master");
     })
-    .done(function() {
+    .then(function() {
       console.log('remote Pushed!');
       fulfill('remote Pushed!');
     })
     .catch(function(err) {
       console.log(err);
       reject(err);
-    })
+    });
   });
 };
 
+exports.createAuthor = createAuthor;
+exports.setWorkingDirectory = setWorkingDirectory;
+exports.setUrl = setUrl;
+exports.setCredentials = setCredentials;
 exports.initializeReposity = initializeReposity;
