@@ -5,7 +5,7 @@ var fse = promisify(require('fs-extra'));
 var Promise = require('promise');
 fse.ensureDir = promisify(fse.ensureDir);
 
-var repository, oid, remote, index, repoDir, author, committer;
+var repository, oid, remote, index, author, committer;
 var directory, url, username, email, password;
 
 
@@ -15,7 +15,6 @@ var setWorkingDirectory = function (name) {
     throw new Error('Please specify directory name' + name);
   }
   directory = name;
-  //repoDir = require('path').resolve(directory);
   console.log('Directory set to ' + directory);
 };
 

@@ -37,7 +37,7 @@ var authenticateUser = function(type, credentials) {
 					fulfill(result);
 				}
 		});
-	})
+	});
 };
 
 /* Creates repository and returns a promise */
