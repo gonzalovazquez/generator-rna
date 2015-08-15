@@ -37,6 +37,7 @@ describe('generator-rna:app', function () {
         helpers.run(path.join(__dirname, '../app'))
           .inDir(path.join(__dirname, 'testApp'))
           .withOptions({ skipInstall: true })
+          .withOptions({ skipAutomation: true })
           .withPrompts(
             { username: 'gonzalovazquez' },
             { password: 'supersecretpassword' },
@@ -75,8 +76,8 @@ describe('generator-rna:app', function () {
         assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/angular/angular.js"></script>'));
       });
 
-      afterEach(function() {
-        rimraf.sync('testApp');
+      after(function() {
+        rimraf.sync(__dirname +  '/testApp/testApp');
       });
   });
 
@@ -85,6 +86,7 @@ describe('generator-rna:app', function () {
         helpers.run(path.join(__dirname, '../app'))
           .inDir(path.join(__dirname, 'testApp'))
           .withOptions({ skipInstall: true })
+          .withOptions({ skipAutomation: true })
           .withPrompts({ appName: 'testApp' })
           .withPrompts({ appType: 'ReactJS' })
           .on('end', done);
@@ -103,8 +105,8 @@ describe('generator-rna:app', function () {
         assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/react/react.js"></script>'));
       });
 
-      afterEach(function() {
-        rimraf.sync('testApp');
+      after(function() {
+        rimraf.sync(__dirname +  '/testApp/testApp');
       });
     });
 
@@ -113,6 +115,8 @@ describe('generator-rna:app', function () {
       before(function (done) {
         helpers.run(path.join(__dirname, '../app'))
           .inDir(path.join(__dirname, 'somethingNew'))
+          .withOptions({ skipInstall: true })
+          .withOptions({ skipAutomation: true })
           .withOptions({appName: 'somethingNew' })
           .withOptions({angular: 'true' })
           .on('end', done);
@@ -126,8 +130,8 @@ describe('generator-rna:app', function () {
         assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/angular/angular.js"></script>'));
       });
 
-      afterEach(function() {
-        rimraf.sync('somethingNew');
+      after(function() {
+        rimraf.sync(__dirname +  '/somethingNew/somethingNew');
       });
 
     });
@@ -135,6 +139,8 @@ describe('generator-rna:app', function () {
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../app'))
+          .withOptions({ skipInstall: true })
+          .withOptions({ skipAutomation: true })
           .inDir(path.join(__dirname, 'somethingElse'))
           .withOptions({appName: 'somethingElse' })
           .withOptions({react: 'true' })
@@ -149,8 +155,8 @@ describe('generator-rna:app', function () {
         assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/react/react.js"></script>'));
       });
 
-      afterEach(function() {
-        rimraf.sync('somethingElse');
+      after(function() {
+        rimraf.sync(__dirname +  '/somethingElse/somethingElse');
       });
 
     });

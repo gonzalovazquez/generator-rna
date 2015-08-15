@@ -20,6 +20,12 @@ module.exports = yeoman.generators.Base.extend({
 			defaults: false
 		});
 
+		this.option('skip-automation', {
+			desc: 'Whether Github automation will run',
+			type: Boolean,
+			defaults: false
+		});
+
 		this.option('appName', {
 			desc: 'Type your application name',
 			type: String,
@@ -176,6 +182,7 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	install: function () {
+		self.automation = this.options['skip-automation'];
 		this.config.save();
 
 		this.installDependencies({
@@ -183,25 +190,27 @@ module.exports = yeoman.generators.Base.extend({
 			npm: false,
 			skipInstall: this.options['skip-install'],
 			callback: function () {
-				console.log('Dependencies have been installed!'.green);
-				console.log('Trying to initialize your repository'.green);
+				if (!self.automation) {
+					console.log('Dependencies have been installed!'.green);
+					console.log('Trying to initialize your repository'.green);
 
-				gitAuto.setWorkingDirectory(self.destination);
-				gitAuto.setUrl(self.context.git_repo);
-				gitAuto.setCredentials(self.context.password);
+					gitAuto.setWorkingDirectory(self.destination);
+					gitAuto.setUrl(self.context.git_repo);
+					gitAuto.setCredentials(self.context.password);
 
-				try {
-					gitAuto.createAuthor(self.context.username, self.context.email).done(function (res) {
-						console.log(res);
-						console.log('Created your Github Author'.green);
-					});
-					gitAuto.initializeReposity().done(function(res) {
-						console.log(res);
-						console.log('Successfully initialized your reposity'.green);
-					});
-				} catch (error) {
-					console.log(error);
-					console.log('Unable to initialize your respository'.red);
+					try {
+						gitAuto.createAuthor(self.context.username, self.context.email).done(function (res) {
+							console.log(res);
+							console.log('Created your Github Author'.green);
+						});
+						gitAuto.initializeReposity().done(function(res) {
+							console.log(res);
+							console.log('Successfully initialized your reposity'.green);
+						});
+					} catch (error) {
+						console.log(error);
+						console.log('Unable to initialize your respository'.red);
+					}
 				}
 			}
 		});
