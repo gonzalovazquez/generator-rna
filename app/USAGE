@@ -1,8 +1,9 @@
 Description:
-    Create an Angular or React barebone web application
+    Create an Angular or React bare bone web application
 
 Options:
     skip-install: Does not install dependencies     Default:false
+    skip-automation: Does not automate your commit    Default:false
     app-name: Specify app name that creates directory   Default:''
     angular: Quickly build an angular app   Default: false
     react: Quickly build a react app    Default: false

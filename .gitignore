@@ -24,6 +24,7 @@
 *node_modules
 *public
 *bower_components
+*token
  
 # Logs and databases #
 ######################
