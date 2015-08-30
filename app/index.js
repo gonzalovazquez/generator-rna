@@ -9,6 +9,30 @@ var async = require('async');
 var colors = require('colors');
 var self = this;
 
+
+function automateRepo(self) {
+		console.log('Dependencies have been installed!'.green);
+		console.log('Trying to initialize your repository'.green);
+
+		gitAuto.setWorkingDirectory(self.destination);
+		gitAuto.setUrl(self.context.git_repo);
+		gitAuto.setCredentials(self.context.password);
+
+		try {
+			gitAuto.createAuthor(self.context.username, self.context.email).done(function (res) {
+				console.log(res);
+				console.log('Created your Github Author'.green);
+			});
+			gitAuto.initializeReposity().done(function(res) {
+				console.log(res);
+				console.log('Successfully initialized your reposity'.green);
+			});
+		} catch (error) {
+			console.log(error);
+			console.log('Unable to initialize your respository'.red);
+		}
+}
+
 module.exports = yeoman.generators.Base.extend({
 
 	constructor: function () {
@@ -32,6 +56,12 @@ module.exports = yeoman.generators.Base.extend({
 			require: true
 		});
 
+		this.option('empty', {
+			desc: 'Create an empty shell',
+			type: Boolean,
+			defaults: false
+		});
+
 		this.option('angular', {
 			desc: 'Create an angular application',
 			type: Boolean,
@@ -52,7 +82,7 @@ module.exports = yeoman.generators.Base.extend({
 
     this.log('In order to authenticate with Gihub, you need to provide your credentials'.green);
 
-		if (!this.options['angular'] && !this.options['react']) {
+		if (!this.options['angular'] && !this.options['react'] && !this.options['empty']) {
 			var prompt = [
         {
 					type    : 'input',
@@ -82,7 +112,8 @@ module.exports = yeoman.generators.Base.extend({
 					choices: [
 						'AngularJS',
 						'ReactJS',
-						'NodeJS'
+						'NodeJS',
+						'EmptyShell'
 					]
 				},
 				{
@@ -105,7 +136,14 @@ module.exports = yeoman.generators.Base.extend({
 			}.bind(this));
 		} else {
 			this.appName = this.options['appName'];
-			this.appType = this.options['angular'] ? 'AngularJS' : 'ReactJS';
+
+			if (this.options['angular']) {
+				this.appType = 'AngularJS';
+			} else if (this.options['react']) {
+				this.appType = 'ReactJS';
+			} else {
+				this.appType = 'EmptyShell';
+			}
 
 			done();
 		}
@@ -152,9 +190,12 @@ module.exports = yeoman.generators.Base.extend({
         });
 
 			this.template('_README.md', this.destinationPath('README.md'), self.context);
-			this.template('_package.json', this.destinationPath('package.json'), self.context);
-			this.template('_bower.json', this.destinationPath('bower.json'), self.context);
-			this.template('_src/index.html', this.destinationPath('src/index.html'), self.context);
+
+			if (this.appType !== 'EmptyShell') {
+				this.template('_package.json', this.destinationPath('package.json'), self.context);
+				this.template('_bower.json', this.destinationPath('bower.json'), self.context);
+				this.template('_src/index.html', this.destinationPath('src/index.html'), self.context);
+			}
 
 			this.directory(this.appName, './');
 		},
@@ -174,10 +215,12 @@ module.exports = yeoman.generators.Base.extend({
 				);
 			}
 
-			this.fs.copy(
-				this.templatePath('_src/styles/main.css'),
-				this.destinationPath('src/styles/main.css')
-			);
+			if (this.appType !== 'EmptyShell') {
+				this.fs.copy(
+					this.templatePath('_src/styles/main.css'),
+					this.destinationPath('src/styles/main.css')
+				);
+			}
 		}
 	},
 
@@ -185,34 +228,19 @@ module.exports = yeoman.generators.Base.extend({
 		self.automation = this.options['skip-automation'];
 		this.config.save();
 
-		this.installDependencies({
-			bower: true,
-			npm: false,
-			skipInstall: this.options['skip-install'],
-			callback: function () {
-				if (!self.automation) {
-					console.log('Dependencies have been installed!'.green);
-					console.log('Trying to initialize your repository'.green);
-
-					gitAuto.setWorkingDirectory(self.destination);
-					gitAuto.setUrl(self.context.git_repo);
-					gitAuto.setCredentials(self.context.password);
-
-					try {
-						gitAuto.createAuthor(self.context.username, self.context.email).done(function (res) {
-							console.log(res);
-							console.log('Created your Github Author'.green);
-						});
-						gitAuto.initializeReposity().done(function(res) {
-							console.log(res);
-							console.log('Successfully initialized your reposity'.green);
-						});
-					} catch (error) {
-						console.log(error);
-						console.log('Unable to initialize your respository'.red);
+		if (this.appType !== 'EmptyShell') {
+			this.installDependencies({
+				bower: true,
+				npm: false,
+				skipInstall: this.options['skip-install'],
+				callback: function () {
+					if (!self.automation) {
+							automateRepo(self);
 					}
 				}
-			}
-		});
+			});
+		} else if (!self.automation) {
+			automateRepo(self);
+		}
 	}
 });
