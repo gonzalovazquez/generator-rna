@@ -32,7 +32,7 @@
     "fs-extra": "^0.23.1",
     "github": "^0.2.4",
     "lodash": "^3.10.0",
-    "nodegit": "^0.4.1",
+    "nodegit": "^0.11.1",
     "path": "^0.11.14",
     "promise": "^7.0.3",
     "promisify": "0.0.3",
