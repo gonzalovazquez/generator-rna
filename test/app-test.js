@@ -8,7 +8,6 @@ var mockery = require('mockery');
 
 describe('generator-rna:app', function () {
 
-
   describe('generator-rna: angular', function() {
 
       before(function (done) {
@@ -135,6 +134,7 @@ describe('generator-rna:app', function () {
       });
 
     });
+
     describe('generator-rna with react arguments', function(){
 
       before(function (done) {
@@ -159,5 +159,34 @@ describe('generator-rna:app', function () {
         rimraf.sync(__dirname +  '/somethingElse/somethingElse');
       });
 
+    });
+
+    describe('generators-rna: empty', function () {
+
+      before(function (done) {
+        helpers.run(path.join(__dirname, '../app'))
+          .withOptions({ skipInstall: true })
+          .withOptions({ skipAutomation: true })
+          .inDir(path.join(__dirname, 'emptyShell'))
+          .withOptions({appName: 'emptyShell' })
+          .withOptions({empty: 'true' })
+          .on('end', done);
+      });
+
+      it('should not include bower file', function() {
+        assert.noFile('bower.json');
+      });
+
+      it('should not include package file', function() {
+          assert.noFile('package.json');
+      });
+
+      it('should include a README.md', function() {
+          assert.file('README.md');
+      });
+
+      after(function() {
+        rimraf.sync(__dirname +  '/emptyShell/emptyShell');
+      });
     });
 });
