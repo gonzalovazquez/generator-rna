@@ -38,8 +38,8 @@
     "promisify": "0.0.3",
     "promisify-node": "^0.1.5",
     "shelljs": "^0.5.1",
-    "yeoman-environment": "^1.2.7",
-    "yeoman-generator": "^0.20.1",
+    "yeoman-environment": "^1.5.2",
+    "yeoman-generator": "^0.22.1",
     "yosay": "^1.0.4"
   },
   "devDependencies": {
