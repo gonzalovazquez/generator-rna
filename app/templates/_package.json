@@ -12,7 +12,9 @@
   ],
   "repository": {
     "type": "git",
+    <% if (action !== 'Starting a new project') { %>
     "url": "<%= git_repo %>"
+    <% } %>
   },
   "devDependencies": {
   }

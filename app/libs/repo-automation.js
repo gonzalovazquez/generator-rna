@@ -86,9 +86,13 @@ var initializeReposity = function () {
       console.log(repository);
       remote = Nodegit.Remote.create(repository, 'origin', url);
     })
-    // Push
     .then(function() {
-      console.log(remote + ' REMOTE');
+        return repository.getRemote("origin");
+    })
+    // Push
+    .then(function(remoteResult) {
+      console.log(remoteResult + ' REMOTE');
+      remote = remoteResult;
       remote.setCallbacks({
          credentials: function() {
            return Nodegit.Cred.userpassPlaintextNew(username, password);

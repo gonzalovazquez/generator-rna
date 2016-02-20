@@ -7,11 +7,11 @@ var github = require('./libs/github.js');
 var gitAuto = require('./libs/repo-automation.js');
 var async = require('async');
 var colors = require('colors');
+var path = require("path");
 var self = this;
 
 
 function automateRepo(self) {
-		console.log('Dependencies have been installed!'.green);
 		console.log('Trying to initialize your repository'.green);
 
 		gitAuto.setWorkingDirectory(self.destination);
@@ -57,12 +57,6 @@ module.exports = yeoman.generators.Base.extend({
 			require: true
 		});
 
-		this.option('empty', {
-			desc: 'Create an empty shell',
-			type: Boolean,
-			defaults: false
-		});
-
 		this.option('angular', {
 			desc: 'Create an angular application',
 			type: Boolean,
@@ -91,54 +85,62 @@ module.exports = yeoman.generators.Base.extend({
 					name		: 'action',
 					message : 'What do you want to do today?',
 					choices : [
-							'Scaffold',
-							'Scaffold With Github',
-							'Github'
+							'Starting a new project',
+							'Starting a new project With Github',
+							'Just create a Github repository'
 						]
 				},
 				{
 					type    : 'input',
 					name    : 'username',
 					message : 'What\'s your Github username?',
+					default : 'gonzalovazquez',
 					when		: function(answers) {
 						console.log(answers.action);
-						return answers.action !== 'Scaffold';
+						return answers.action !== 'Starting a new project';
 					}
 				},
 				{
 					type    : 'input',
 					name    : 'email',
 					message : 'What is your email on Github?',
+					default : 'gonzalovazquez010@gmail.com',
 					when		: function(answers) {
 						console.log(answers.action);
-						return answers.action !== 'Scaffold';
+						return answers.action !== 'Starting a new project';
 					}
 				},
 				{
 					type    : 'password',
 					name    : 'password',
 					message : 'What\'s your Github password?',
+					default : '1920swordFish1388',
 					when		: function(answers) {
 						console.log(answers.action);
-						return answers.action !== 'Scaffold';
+						return answers.action !== 'Starting a new project';
 					}
 				},
 				{
 					type    : 'input',
 					name    : 'appName',
 					message : 'Your project name',
-					default : this.appname // Default to current folder name
+					default :  process.cwd().split(path.sep).pop(), // Default to current folder name,
+					when    : function(answers) {
+						return answers.action !== 'Just create a Github repository'
+					}
 				},
 			 	{
-					type: 'list',
-					name: 'appType',
-					message: 'Select a type of app you will build today',
-					choices: [
+					type    : 'list',
+					name    : 'appType',
+					message : 'Select a type of app you will build today',
+					choices : [
 						'AngularJS',
 						'ReactJS',
-						'NodeJS',
-						'EmptyShell'
-					]
+						'NodeJS'
+					],
+					when    : function(answers) {
+						return answers.action !== 'Just create a Github repository'
+					}
 				},
 				{
 					type    : 'input',
@@ -148,12 +150,13 @@ module.exports = yeoman.generators.Base.extend({
 			];
 
 			this.prompt(prompt, function (response) {
+				var defaultAppName = process.cwd().split(path.sep).pop();
 				this.action = response.action;
         this.username = response.username;
         this.password = response.password;
-				this.appName = response.appName;
+				this.appName = response.appName || defaultAppName;
 				this.appType = response.appType;
-				this.gitRepo = 'https://github.com/' + response.username + '/' + response.appName + '.git';
+				this.gitRepo = 'https://github.com/' + response.username + '/' + this.appName + '.git';
 				this.description = response.description;
 				this.email = response.email;
 				done();
@@ -165,8 +168,6 @@ module.exports = yeoman.generators.Base.extend({
 				this.appType = 'AngularJS';
 			} else if (this.options['react']) {
 				this.appType = 'ReactJS';
-			} else {
-				this.appType = 'EmptyShell';
 			}
 
 			done();
@@ -177,7 +178,11 @@ module.exports = yeoman.generators.Base.extend({
 
 		app: function () {
 
-			self.destination = this.destinationRoot(this.appName);
+			if (this.action === 'Just create a Github repository') {
+					self.destination = this.destinationRoot();
+			} else {
+					self.destination = this.destinationRoot(this.appName);
+			}
 
 			console.log(self.destination);
 
@@ -192,10 +197,11 @@ module.exports = yeoman.generators.Base.extend({
 				email: this.email
 			};
 
-			if (self.context.action !== 'Scaffold') {
+			if (self.context.action !== 'Starting a new project') {
 				async.series(
 					[
 						function (callback) {
+							console.log(self.context);
 							var authenticate = github.authenticateUser('basic', self.context);
 							console.log(authenticate);
 							callback(null, authenticate);
@@ -218,7 +224,7 @@ module.exports = yeoman.generators.Base.extend({
 
 			this.template('_README.md', this.destinationPath('README.md'), self.context);
 
-			if (this.appType !== 'EmptyShell') {
+			if (this.action  !== 'Just create a Github repository') {
 				this.template('_package.json', this.destinationPath('package.json'), self.context);
 				this.template('_bower.json', this.destinationPath('bower.json'), self.context);
 				this.template('_src/index.html', this.destinationPath('src/index.html'), self.context);
@@ -233,16 +239,16 @@ module.exports = yeoman.generators.Base.extend({
 				this.destinationPath('.gitignore')
 			);
 
-			if (this.appType === 'AngularJS') {
+			if (this.appType === 'AngularJS' && this.action !== 'Just create a Github repository' ) {
 				this.template('_src/js/app.js', this.destinationPath('src/js/app.js'), self.context);
-			} else if (this.appType === 'ReactJS') {
+			} else if (this.appType === 'ReactJS' && this.action !== 'Just create a Github repository' ) {
 				this.fs.copy(
 					this.templatePath('_src/js/app_jsx.js'),
 					this.destinationPath('src/js/app.js')
 				);
 			}
 
-			if (this.appType !== 'EmptyShell') {
+			if (this.action  !== 'Just create a Github repository') {
 				this.fs.copy(
 					this.templatePath('_src/styles/main.css'),
 					this.destinationPath('src/styles/main.css')
@@ -255,13 +261,14 @@ module.exports = yeoman.generators.Base.extend({
 		self.automation = this.options['skip-automation'];
 		this.config.save();
 
-		if (this.appType !== 'EmptyShell') {
+		if (this.action !== 'Just create a Github repository') {
 			this.installDependencies({
 				bower: true,
 				npm: false,
 				skipInstall: this.options['skip-install'],
 				callback: function () {
-					if (!self.automation && self.context.action !== 'Scaffold') {
+					console.log('Dependencies have been installed!'.green);
+					if (!self.automation && self.context.action !== 'Starting a new project') {
 							automateRepo(self);
 					}
 				}
