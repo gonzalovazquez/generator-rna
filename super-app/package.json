@@ -1,0 +1,19 @@
+{
+  "name": "super-app",
+  "version": "0.0.1",
+  "author": "Gonzalo Vazquez",
+  "description": "a super dupper app",
+  "private": true,
+  "contributors": [
+    {
+      "name": "Gonzalo Vazquez",
+      "email": "gonzalo.segura1@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/undefined/super-app.git"
+  },
+  "devDependencies": {
+  }
+}
