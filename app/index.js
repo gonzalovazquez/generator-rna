@@ -38,6 +38,7 @@ module.exports = yeoman.generators.Base.extend({
 	constructor: function () {
 		yeoman.generators.Base.apply(this, arguments);
 
+
 		this.option('skip-install', {
 			desc: 'Whether dependencies should be installed',
 			type: Boolean,
@@ -80,24 +81,47 @@ module.exports = yeoman.generators.Base.extend({
 
 		this.log(yosay('Let\'s create an awesome project!'));
 
-    this.log('In order to authenticate with Gihub, you need to provide your credentials'.green);
+
+    //this.log('In order to authenticate with Gihub, you need to provide your credentials'.green);
 
 		if (!this.options['angular'] && !this.options['react'] && !this.options['empty']) {
 			var prompt = [
-        {
+				{
+					type		: 'list',
+					name		: 'action',
+					message : 'What do you want to do today?',
+					choices : [
+							'Scaffold',
+							'Scaffold With Github',
+							'Github'
+						]
+				},
+				{
 					type    : 'input',
 					name    : 'username',
 					message : 'What\'s your Github username?',
+					when		: function(answers) {
+						console.log(answers.action);
+						return answers.action !== 'Scaffold';
+					}
 				},
-        {
+				{
 					type    : 'input',
 					name    : 'email',
 					message : 'What is your email on Github?',
+					when		: function(answers) {
+						console.log(answers.action);
+						return answers.action !== 'Scaffold';
+					}
 				},
-        {
+				{
 					type    : 'password',
 					name    : 'password',
 					message : 'What\'s your Github password?',
+					when		: function(answers) {
+						console.log(answers.action);
+						return answers.action !== 'Scaffold';
+					}
 				},
 				{
 					type    : 'input',
@@ -105,7 +129,7 @@ module.exports = yeoman.generators.Base.extend({
 					message : 'Your project name',
 					default : this.appname // Default to current folder name
 				},
-			 {
+			 	{
 					type: 'list',
 					name: 'appType',
 					message: 'Select a type of app you will build today',
@@ -124,6 +148,7 @@ module.exports = yeoman.generators.Base.extend({
 			];
 
 			this.prompt(prompt, function (response) {
+				this.action = response.action;
         this.username = response.username;
         this.password = response.password;
 				this.appName = response.appName;
@@ -131,7 +156,6 @@ module.exports = yeoman.generators.Base.extend({
 				this.gitRepo = 'https://github.com/' + response.username + '/' + response.appName + '.git';
 				this.description = response.description;
 				this.email = response.email;
-
 				done();
 			}.bind(this));
 		} else {
@@ -158,6 +182,7 @@ module.exports = yeoman.generators.Base.extend({
 			console.log(self.destination);
 
 			self.context = {
+				action: this.action,
 				app_type: this.appType,
 				app_name: this.appName,
 				git_repo: this.gitRepo,
@@ -167,27 +192,29 @@ module.exports = yeoman.generators.Base.extend({
 				email: this.email
 			};
 
-      async.series(
-        [
-          function (callback) {
-            var authenticate = github.authenticateUser('basic', self.context);
-            console.log(authenticate);
-            callback(null, authenticate);
-            console.log('Successfully authenticated with Github'.green);
-          },
-          function (callback) {
-            var createRepository = github.createRepo(self.context);
-            callback(null, createRepository);
-            console.log('Repository created'.green);
-          }
-        ],
-        function (err, result) {
-          if (err) {
-            console.log('An error occurred' + err);
-            return;
-          }
-          console.log(result);
-        });
+			if (self.context.action !== 'Scaffold') {
+				async.series(
+					[
+						function (callback) {
+							var authenticate = github.authenticateUser('basic', self.context);
+							console.log(authenticate);
+							callback(null, authenticate);
+							console.log('Successfully authenticated with Github'.green);
+						},
+						function (callback) {
+							var createRepository = github.createRepo(self.context);
+							callback(null, createRepository);
+							console.log('Repository created'.green);
+						}
+					],
+					function (err, result) {
+						if (err) {
+							console.log('An error occurred' + err);
+							return;
+						}
+						console.log(result);
+					});
+			}
 
 			this.template('_README.md', this.destinationPath('README.md'), self.context);
 
@@ -234,7 +261,7 @@ module.exports = yeoman.generators.Base.extend({
 				npm: false,
 				skipInstall: this.options['skip-install'],
 				callback: function () {
-					if (!self.automation) {
+					if (!self.automation && self.context.action !== 'Scaffold') {
 							automateRepo(self);
 					}
 				}
