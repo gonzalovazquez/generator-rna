@@ -35,37 +35,6 @@ module.exports = yeoman.generators.Base.extend({
 
 	constructor: function () {
 		yeoman.generators.Base.apply(this, arguments);
-
-
-		this.option('skip-install', {
-			desc: 'Whether dependencies should be installed',
-			type: Boolean,
-			defaults: false
-		});
-
-		this.option('skip-automation', {
-			desc: 'Whether Github automation will run',
-			type: Boolean,
-			defaults: false
-		});
-
-		this.option('appName', {
-			desc: 'Type your application name',
-			type: String,
-			require: true
-		});
-
-		this.option('angular', {
-			desc: 'Create an angular application',
-			type: Boolean,
-			defaults: false
-		});
-
-		this.option('react', {
-			desc: 'Create a react application',
-			type: Boolean,
-			defaults: false
-		});
 	},
 
 	askFor: function () {
@@ -76,8 +45,7 @@ module.exports = yeoman.generators.Base.extend({
 
     //this.log('In order to authenticate with Gihub, you need to provide your credentials'.green);
 
-		if (!this.options['angular'] && !this.options['react'] && !this.options['empty']) {
-			var prompt = [
+		var prompt = [
 				{
 					type		: 'list',
 					name		: 'action',
@@ -153,17 +121,6 @@ module.exports = yeoman.generators.Base.extend({
 				this.email = response.email;
 				done();
 			}.bind(this));
-		} else {
-			this.appName = this.options['appName'];
-
-			if (this.options['angular']) {
-				this.appType = 'AngularJS';
-			} else if (this.options['react']) {
-				this.appType = 'ReactJS';
-			}
-
-			done();
-		}
 	},
 
 	writing: {
@@ -247,7 +204,6 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	install: function () {
-		self.automation = this.options['skip-automation'];
 		this.config.save();
 
 		if (this.action !== 'Just create a Github repository') {
@@ -257,12 +213,12 @@ module.exports = yeoman.generators.Base.extend({
 				skipInstall: this.options['skip-install'],
 				callback: function () {
 					console.log('Dependencies have been installed!'.green);
-					if (!self.automation && self.context.action !== 'Starting a new project') {
+					if (self.context.action !== 'Starting a new project') {
 							automateRepo(self);
 					}
 				}
 			});
-		} else if (!self.automation) {
+		} else {
 			automateRepo(self);
 		}
 	}
