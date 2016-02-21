@@ -20,12 +20,10 @@ function automateRepo(self) {
 
 		try {
 			gitAuto.createAuthor(self.context.username, self.context.email).done(function (res) {
-				console.log(res);
 				console.log('Created your Github Author'.green);
 			});
 			gitAuto.initializeReposity().done(function(res) {
-				console.log(res);
-				console.log('Successfully initialized your reposity'.green);
+				console.log('Successfully initialized your respository'.green);
 			});
 		} catch (error) {
 			console.log(error);
@@ -94,30 +92,24 @@ module.exports = yeoman.generators.Base.extend({
 					type    : 'input',
 					name    : 'username',
 					message : 'What\'s your Github username?',
-					default : 'gonzalovazquez',
 					when		: function(answers) {
-						console.log(answers.action);
-						return answers.action !== 'Starting a new project';
+										return answers.action !== 'Starting a new project';
 					}
 				},
 				{
 					type    : 'input',
 					name    : 'email',
 					message : 'What is your email on Github?',
-					default : 'gonzalovazquez010@gmail.com',
 					when		: function(answers) {
-						console.log(answers.action);
-						return answers.action !== 'Starting a new project';
+										return answers.action !== 'Starting a new project';
 					}
 				},
 				{
 					type    : 'password',
 					name    : 'password',
 					message : 'What\'s your Github password?',
-					default : '1920swordFish1388',
 					when		: function(answers) {
-						console.log(answers.action);
-						return answers.action !== 'Starting a new project';
+										return answers.action !== 'Starting a new project';
 					}
 				},
 				{
@@ -126,7 +118,7 @@ module.exports = yeoman.generators.Base.extend({
 					message : 'Your project name',
 					default :  process.cwd().split(path.sep).pop(), // Default to current folder name,
 					when    : function(answers) {
-						return answers.action !== 'Just create a Github repository'
+										return answers.action !== 'Just create a Github repository'
 					}
 				},
 			 	{
@@ -139,7 +131,7 @@ module.exports = yeoman.generators.Base.extend({
 						'NodeJS'
 					],
 					when    : function(answers) {
-						return answers.action !== 'Just create a Github repository'
+										return answers.action !== 'Just create a Github repository'
 					}
 				},
 				{
@@ -150,7 +142,7 @@ module.exports = yeoman.generators.Base.extend({
 			];
 
 			this.prompt(prompt, function (response) {
-				var defaultAppName = process.cwd().split(path.sep).pop();
+				var defaultAppName = process.cwd().split(path.sep).pop() //Using current directory for app name;
 				this.action = response.action;
         this.username = response.username;
         this.password = response.password;
@@ -201,9 +193,7 @@ module.exports = yeoman.generators.Base.extend({
 				async.series(
 					[
 						function (callback) {
-							console.log(self.context);
 							var authenticate = github.authenticateUser('basic', self.context);
-							console.log(authenticate);
 							callback(null, authenticate);
 							console.log('Successfully authenticated with Github'.green);
 						},
