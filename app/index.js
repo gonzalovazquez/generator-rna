@@ -208,7 +208,6 @@ module.exports = yeoman.generators.Base.extend({
 							console.log('An error occurred' + err);
 							return;
 						}
-						console.log(result);
 					});
 			}
 

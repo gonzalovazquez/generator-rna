@@ -27,8 +27,6 @@ var authenticateUser = function(type, credentials) {
 		    username: credentials.username,
 		    password: credentials.password
 		}, function(err, result) {
-				console.log('EROR' + err);
-				console.log('result ' + result);
 				if (err) {
 					console.log('Wrong credentials'.red);
 					reject(err);
