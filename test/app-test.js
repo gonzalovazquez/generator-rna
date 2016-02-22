@@ -3,7 +3,7 @@
 var path = require('path');
 var rimraf = require('rimraf');
 var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
+var helpers = require('yeoman-generator').test;
 var mockery = require('mockery');
 
 describe('generator-rna:app', function () {

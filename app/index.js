@@ -19,12 +19,25 @@ function automateRepo(self) {
 		gitAuto.setCredentials(self.context.password);
 
 		try {
-			gitAuto.createAuthor(self.context.username, self.context.email).done(function (res) {
-				console.log('Created your Github Author'.green);
-			});
-			gitAuto.initializeReposity().done(function(res) {
-				console.log('Successfully initialized your respository'.green);
-			});
+			async.series(
+				[
+					function (callback) {
+						var createAuthor = gitAuto.createAuthor(self.context.username, self.context.email);
+						callback(null, createAuthor);
+						console.log('Created your Github Author'.green);
+					},
+					function (callback) {
+						var initializeReposity = gitAuto.initializeReposity()
+						callback(null, initializeReposity);
+						console.log('Successfully initialized your respository'.green);
+					}
+				],
+				function (err, result) {
+					if (err) {
+						console.log('An error occurred' + err);
+						return;
+					}
+				});
 		} catch (error) {
 			console.log(error);
 			console.log('Unable to initialize your respository'.red);
