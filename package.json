@@ -44,8 +44,9 @@
   },
   "devDependencies": {
     "jshint": "^2.8.0",
-    "mocha": "^2.2.5",
+    "mocha": "^2.4.5",
     "mockery": "^1.4.0",
-    "rimraf": "^2.4.1"
+    "rimraf": "^2.4.1",
+    "yeoman-assert": "^2.1.1"
   }
 }
