@@ -122,7 +122,7 @@ describe('generator-rna:app', function () {
 
     });
 
-    describe(' Starting a new project With Github using a ReactJS project', function() {
+    describe('Starting a new project With Github using a ReactJS project', function() {
 
         before(function (done) {
 
@@ -159,6 +159,10 @@ describe('generator-rna:app', function () {
           rimraf.sync(__dirname +  '/testAppReact/');
         });
 
+      });
+
+      describe('Just create a Github repository', function() {
+          //@TODO: Write test for creating a Github repository
       });
 
 });
