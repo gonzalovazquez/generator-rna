@@ -122,43 +122,43 @@ describe('generator-rna:app', function () {
 
     });
 
-    // describe(' Starting a new project With Github using a ReactJS project', function() {
-    //
-    //     before(function (done) {
-    //
-    //     helpers.run(path.join(__dirname, '../app'))
-    //         .inDir(path.join(__dirname, 'testAppReact'))
-    //         .withOptions({ skipInstall: true })
-    //         .withPrompts({ action: 'Starting a new project With Github' })
-    //         .withPrompts({ username: 'gonzalovazquez' })
-    //         .withPrompts({ email: 'gonzalovazquez010@gmail.com' })
-    //         .withPrompts({ password: 'supersecretpassword' })
-    //         .withPrompts({ appName: 'testAppReact' })
-    //         .withPrompts({ appType: 'ReactJS' })
-    //         .on('end', done);
-    //     });
-    //
-    //     it('should create .git respository', function() {
-    //         assert.file('.git');
-    //     })
-    //
-    //     it('should print out app name in bower and package', function() {
-    //         assert.fileContent('bower.json',  /"name": "testAppReact"/);
-    //         assert.fileContent('package.json',  /"name": "testAppReact"/);
-    //     });
-    //
-    //      it('should install react dependency in bower.json', function() {
-    //        assert.fileContent('bower.json', new RegExp('"react"'));
-    //     });
-    //
-    //     it('should include react dependency in index.html', function() {
-    //         assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/react/react.js"></script>'));
-    //     });
-    //
-    //     after(function() {
-    //       rimraf.sync(__dirname +  '/testAppReact/');
-    //     });
-    //
-    //   });
+    describe(' Starting a new project With Github using a ReactJS project', function() {
+
+        before(function (done) {
+
+        helpers.run(path.join(__dirname, '../app'))
+            .inDir(path.join(__dirname, 'testAppReact'))
+            .withOptions({ skipInstall: true })
+            .withPrompts({ action: 'Starting a new project With Github' })
+            .withPrompts({ username: 'gonzalovazquez' })
+            .withPrompts({ email: 'gonzalovazquez010@gmail.com' })
+            .withPrompts({ password: 'supersecretpassword' })
+            .withPrompts({ appName: 'testAppReact' })
+            .withPrompts({ appType: 'ReactJS' })
+            .on('end', done);
+        });
+
+        it('should create .git respository', function() {
+            assert.file('.git');
+        })
+
+        it('should print out app name in bower and package', function() {
+            assert.fileContent('bower.json',  /"name": "testAppReact"/);
+            assert.fileContent('package.json',  /"name": "testAppReact"/);
+        });
+
+         it('should install react dependency in bower.json', function() {
+           assert.fileContent('bower.json', new RegExp('"react"'));
+        });
+
+        it('should include react dependency in index.html', function() {
+            assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/react/react.js"></script>'));
+        });
+
+        after(function() {
+          rimraf.sync(__dirname +  '/testAppReact/');
+        });
+
+      });
 
 });
