@@ -8,8 +8,34 @@ var mockery = require('mockery');
 
 describe('generator-rna:app', function () {
 
-    describe('Starting a new project', function() {
+      mockery.enable({
+          warnOnReplace: false,
+          warnOnUnregistered: false
+      });
 
+      mockery.registerMock('github', function () {
+        return {
+          user: {
+            authenticate: function (data, cb) {
+              cb(null, JSON.stringify({
+                type: 'basic',
+                username: 'gonzalovazquez',
+                password: 'supersecretpassword'
+              }));
+            }
+          },
+          repos: {
+            create: function (data, cb) {
+              cb(null, JSON.stringify({
+                name: 'testAppFromTest',
+                description: 'my super app'
+              }));
+            }
+          }
+        };
+      });
+
+    describe('Starting a new project', function() {
         before(function(done) {
           helpers.run(path.join(__dirname, '../app'))
             .inDir(path.join(__dirname, 'testApp'))
@@ -39,7 +65,7 @@ describe('generator-rna:app', function () {
         });
 
         after(function() {
-          rimraf.sync(__dirname +  '/testApp/testApp');
+          rimraf.sync(__dirname +  '/testApp/');
         });
     });
 
@@ -47,36 +73,8 @@ describe('generator-rna:app', function () {
 
       before(function (done) {
 
-        mockery.enable({
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-
-        mockery.registerMock('github', function () {
-          return {
-            user: {
-              authenticate: function (data, cb) {
-                cb(null, JSON.stringify({
-                  type: 'basic',
-                  username: 'gonzalovazquez',
-                  password: 'supersecretpassword',
-                  email: 'gonzalovazquez010@gmail.com'
-                }));
-              }
-            },
-            repos: {
-              create: function (data, cb) {
-                cb(null, JSON.stringify({
-                  name: 'testAppFromTest',
-                  description: 'my super app'
-                }));
-              }
-            }
-          };
-        });
-
         helpers.run(path.join(__dirname, '../app'))
-          //.inDir(path.join(__dirname, 'testAppAngular/testAppAngular'))
+          .inDir(path.join(__dirname, 'testAppAngular'))
           .withOptions({ skipInstall: true })
           .withPrompts({ action: 'Starting a new project With Github' })
           .withPrompts({ username: 'gonzalovazquez' })
@@ -119,51 +117,48 @@ describe('generator-rna:app', function () {
       });
 
       after(function() {
-        rimraf.sync(__dirname +  '/testAppAngular/testAppAngular');
+        rimraf.sync(__dirname +  '/testAppAngular/');
       });
 
     });
 
-    describe(' Starting a new project With Github using a ReactJS project', function() {
+    // describe(' Starting a new project With Github using a ReactJS project', function() {
+    //
+    //     before(function (done) {
+    //
+    //     helpers.run(path.join(__dirname, '../app'))
+    //         .inDir(path.join(__dirname, 'testAppReact'))
+    //         .withOptions({ skipInstall: true })
+    //         .withPrompts({ action: 'Starting a new project With Github' })
+    //         .withPrompts({ username: 'gonzalovazquez' })
+    //         .withPrompts({ email: 'gonzalovazquez010@gmail.com' })
+    //         .withPrompts({ password: 'supersecretpassword' })
+    //         .withPrompts({ appName: 'testAppReact' })
+    //         .withPrompts({ appType: 'ReactJS' })
+    //         .on('end', done);
+    //     });
+    //
+    //     it('should create .git respository', function() {
+    //         assert.file('.git');
+    //     })
+    //
+    //     it('should print out app name in bower and package', function() {
+    //         assert.fileContent('bower.json',  /"name": "testAppReact"/);
+    //         assert.fileContent('package.json',  /"name": "testAppReact"/);
+    //     });
+    //
+    //      it('should install react dependency in bower.json', function() {
+    //        assert.fileContent('bower.json', new RegExp('"react"'));
+    //     });
+    //
+    //     it('should include react dependency in index.html', function() {
+    //         assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/react/react.js"></script>'));
+    //     });
+    //
+    //     after(function() {
+    //       rimraf.sync(__dirname +  '/testAppReact/');
+    //     });
+    //
+    //   });
 
-        before(function (done) {
-
-          helpers.run(path.join(__dirname, '../app'))
-            // .inDir(path.join(__dirname, 'testAppReact'))
-            .withOptions({ skipInstall: true })
-            .withPrompts({ action: 'Starting a new project With Github' })
-            .withPrompts({ username: 'gonzalovazquez' })
-            .withPrompts({ email: 'gonzalovazquez010@gmail.com' })
-            .withPrompts({ password: 'supersecretpassword' })
-            .withPrompts({ appName: 'testAppReact' })
-            .withPrompts({ appType: 'ReactJS' })
-            .on('end', done);
-        });
-
-        it('should create .git respository', function() {
-            assert.file('.git');
-        })
-
-        it('should print out app name in bower and package', function() {
-            assert.fileContent('bower.json',  /"name": "testAppReact"/);
-            assert.fileContent('package.json',  /"name": "testAppReact"/);
-        });
-
-         it('should install react dependency in bower.json', function() {
-           assert.fileContent('bower.json', new RegExp('"react"'));
-        });
-
-        it('should include react dependency in index.html', function() {
-            assert.fileContent('src/index.html', new RegExp('<script type="text/javascript" src="/bower_components/react/react.js"></script>'));
-        });
-
-        after(function() {
-          rimraf.sync(__dirname +  '/testAppReact/testAppReact');
-        });
-
-      });
-
-    describe('Just create a Github repository', function() {
-
-    });
 });
