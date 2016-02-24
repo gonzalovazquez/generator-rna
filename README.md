@@ -4,5 +4,8 @@
 
 ##Release Notes
 
+- 0.2.3
+Change generator to offer three options. Creating a project, creating a project with Github repository and just creating a repository
+
 - 0.1.3
 Updated version of NodeGit
