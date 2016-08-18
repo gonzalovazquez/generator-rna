@@ -4,6 +4,9 @@
 
 ##Release Notes
 
+- 0.2.4
+Updating version of NodeGit to fix broken tests
+
 - 0.2.3
 Change generator to offer three options. Creating a project, creating a project with Github repository and just creating a repository
 
